@@ -3,7 +3,7 @@
 ## 概述
 
 MSSQL MCP Server, 提供数据库交互和商业智能功能。此服务器支持运行 SQL 查询、分析业务数据和自动生成业务洞察备忘录。  
-参照官网的 SQLite 适配MSSQL
+参照官网的 SQLite 进行修改以适配MSSQL
 
 ## 工具
 
@@ -63,16 +63,16 @@ pip install -r requirements.txt
 ### Claude Desktop 、 Windsurf
 
 ```bash
-# 添加到 claude_desktop_config.json.注意路径替换为你的实际路径  
+# 添加到 claude_desktop_config.json。注意路径替换为你的实际路径  
 {
 	"mcpServers": {
-	  "mssql": {
-				"command": "py",
-				"args": [
-					# 你的实际路径，如："C:\\mssql-mcp\\src\\server.py"
-					"~/server.py"
-				]
-			}
+		"mssql": {
+			"command": "py",
+			"args": [
+			    // 你的实际路径，如："C:\\mssql-mcp\\src\\server.py"
+				"~/server.py"
+			]
+		}
 	}
 }
 ```
@@ -80,7 +80,7 @@ pip install -r requirements.txt
 ### Cursor
 
 ```bash
-# 按照下图添加到Cursor MCP.注意路径替换为你的实际路径  
+# 按照下图添加到Cursor MCP。注意路径替换为你的实际路径  
 ```
 ![Cursor配置](imgs/cursor_config.png)
 
