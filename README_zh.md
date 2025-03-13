@@ -69,10 +69,10 @@ pip install -r requirements.txt
         "mssql": {
             "command": "py",
             "args": [
-                //你的实际路径，如："C:\\mssql-mcp\\src\\server.py"
+                # 你的实际路径，如："C:\\mssql-mcp\\src\\server.py"
                 "~/server.py"
             ]
-	    }
+        }
     }
 }
 ```

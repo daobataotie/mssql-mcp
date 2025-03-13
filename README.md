@@ -71,10 +71,10 @@ pip install -r requirements.txt
         "mssql": {
             "command": "py",
             "args": [
-                //your path，e.g.："C:\\mssql-mcp\\src\\server.py"
+                # your path，e.g.："C:\\mssql-mcp\\src\\server.py"
                 "~/server.py"
             ]
-	    }
+        }
     }
 }
 ```
