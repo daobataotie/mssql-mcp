@@ -65,15 +65,15 @@ pip install -r requirements.txt
 ```bash
 # 添加到 claude_desktop_config.json。注意路径替换为你的实际路径  
 {
-	"mcpServers": {
-		"mssql": {
-			"command": "py",
-			"args": [
-			    // 你的实际路径，如："C:\\mssql-mcp\\src\\server.py"
-				"~/server.py"
-			]
-		}
-	}
+    "mcpServers": {
+        "mssql": {
+            "command": "py",
+            "args": [
+                //你的实际路径，如："C:\\mssql-mcp\\src\\server.py"
+                "~/server.py"
+            ]
+	    }
+    }
 }
 ```
 
