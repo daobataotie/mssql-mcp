@@ -100,21 +100,24 @@ pip install -r requirements.txt
 npx -y @modelcontextprotocol/inspector py C:\\mssql-mcp\\src\\server.py
 ```
 ## 项目结构
-mssql-mcp\
-├── .git/                 
-├── .gitignore            
-├── LICENSE               
-├── README.md            
-├── README_en.md          
-├── README_zh.md          
-├── imgs/         
-│   ├── cursor_config.png           
-│   ├── table.png          
-│   └── demo.gif           
-├── requirements.txt       
-└── src/                   
-    ├── __init__.py         
-    └── server.py 
+
+```
+mssql-mcp
+├── .git
+├── .gitignore
+├── LICENSE
+├── README.md
+├── README_en.md
+├── README_zh.md
+├── imgs
+│   ├── cursor_config.png
+│   ├── table.png
+│   └── demo.gif
+├── requirements.txt
+└── src
+    ├── __init__.py
+    └── server.py
+```
 
 ## License
 
