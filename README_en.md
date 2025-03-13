@@ -19,7 +19,16 @@ Refer to the official website's SQLite for modifications to adapt to MSSQL
    - View schema information for a specific table
 - `append_insight`
    - Add new business insights to the memo resource
-   
+
+## Demo
+The database table is as follows. The column names are not standardized, and AI will match them on its own. Errors during SQL execution will self correct.
+
+![Table](imgs/table.png)
+
+The following is the demo.
+
+![Demo](imgs/demo.gif)
+
 ## Operating environment
 
 - `Python 3.x`
@@ -90,6 +99,22 @@ pip install -r requirements.txt
 # Note：use your path  
 npx -y @modelcontextprotocol/inspector py C:\\mssql-mcp\\src\\server.py
 ```
+## Project Structure
+mssql-mcp\
+├── .git/                 
+├── .gitignore            
+├── LICENSE               
+├── README.md            
+├── README_en.md          
+├── README_zh.md          
+├── imgs/         
+│   ├── cursor_config.png           
+│   ├── table.png          
+│   └── demo.gif           
+├── requirements.txt       
+└── src/                   
+    ├── __init__.py         
+    └── server.py 
 
 ## License
 

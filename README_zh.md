@@ -3,7 +3,7 @@
 ## 概述
 
 MSSQL MCP Server, 提供数据库交互和商业智能功能。此服务器支持运行 SQL 查询、分析业务数据和自动生成业务洞察备忘录。  
-参照官网的 SQLite 进行修改以适配MSSQL
+参照官网的 SQLite 进行修改以适配MSSQL。
 
 ## 工具
 
@@ -19,6 +19,15 @@ MSSQL MCP Server, 提供数据库交互和商业智能功能。此服务器支�
    - 获取特定表的架构信息
 - `append_insight`
    - 向备忘录添加业务洞察
+
+## 演示
+数据库表如下，列名不规范，AI会自行匹配，执行Sql过程中出错会自纠正。
+
+![Table](imgs/table.png)
+
+以下是视频演示。
+
+![Demo](imgs/demo.gif)
 
 ## 运行环境
 
@@ -90,6 +99,22 @@ pip install -r requirements.txt
 # 注意路径替换为你的实际路径  
 npx -y @modelcontextprotocol/inspector py C:\\mssql-mcp\\src\\server.py
 ```
+## 项目结构
+mssql-mcp\
+├── .git/                 
+├── .gitignore            
+├── LICENSE               
+├── README.md            
+├── README_en.md          
+├── README_zh.md          
+├── imgs/         
+│   ├── cursor_config.png           
+│   ├── table.png          
+│   └── demo.gif           
+├── requirements.txt       
+└── src/                   
+    ├── __init__.py         
+    └── server.py 
 
 ## License
 
