@@ -78,7 +78,7 @@ pip install -r requirements.txt
 {
     "mcpServers": {
         "mssql": {
-            "command": "py",
+            "command": "python",
             "args": [
                 # your path，e.g.："C:\\mssql-mcp\\src\\server.py"
                 "~/server.py"
@@ -99,7 +99,7 @@ pip install -r requirements.txt
 
 ```bash
 # Note：use your path  
-npx -y @modelcontextprotocol/inspector py C:\\mssql-mcp\\src\\server.py
+npx -y @modelcontextprotocol/inspector python C:\\mssql-mcp\\src\\server.py
 ```
 ## Project Structure
 
