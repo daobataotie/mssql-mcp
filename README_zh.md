@@ -59,12 +59,6 @@ pip install -r requirements.txt
         "username": "账号",
         "password": "密码",
         "trusted_connection": false
-    },
-    "server": {
-        "name": "mssql-manager",
-        "version": "0.1.0",
-        "host": "0.0.0.0",
-        "port": 8080
     }
 }
 ```
