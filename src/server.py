@@ -187,7 +187,7 @@ class MssqlDatabase:
         logger.debug("生成了基本的备忘录格式")
         return memo
 
-    def _execute_query(self, query: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    def _execute_query(self, query: str, params: dict[str, Any] | tuple | list | None = None) -> list[dict[str, Any]]:
         """执行SQL查询并返回结果字典列表"""
         logger.debug(f"执行查询: {query}")
         try:
@@ -349,7 +349,7 @@ async def main():
                     FROM INFORMATION_SCHEMA.COLUMNS
                     WHERE TABLE_NAME = ?
                     """,
-                    {"table_name": arguments['table_name']}
+                    (arguments['table_name'],)
                 )
                 return [types.TextContent(type="text", text=str(results))]
 
