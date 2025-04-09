@@ -59,6 +59,10 @@ pip install -r requirements.txt
         "username": "username",
         "password": "password",
         "trusted_connection": false
+    },
+    "server": {
+        "name": "mssql-manager",
+        "version": "0.1.0"
     }
 }
 ```
