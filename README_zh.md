@@ -91,6 +91,8 @@ pip install -r requirements.txt
 ```
 ![Cursor配置](imgs/cursor_config.png)
 
+说明：新版Cursor也改为了json配置，参见上一节
+
 ### MCP Inspector
 
 ```bash

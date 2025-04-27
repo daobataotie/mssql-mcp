@@ -93,6 +93,8 @@ pip install -r requirements.txt
 ```
 ![Cursor config](imgs/cursor_config.png)
 
+Note：The new version of cursor has also been changed to JSON configuration, please refer to the previous section
+
 ### MCP Inspector
 
 ```bash
