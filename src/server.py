@@ -369,8 +369,9 @@ async def main():
                 raise ValueError("缺少参数")
 
             if name == "read_query":
-                if not arguments["query"].strip().upper().startswith("SELECT"):
-                    raise ValueError("read_query 只允许 SELECT 查询")
+                query_upper = arguments["query"].strip().upper()
+                if not (query_upper.startswith("SELECT") or query_upper.startswith("WITH")):
+                    raise ValueError("read_query 只允许 SELECT 查询和 WITH 子句")
                 results = db._execute_query(arguments["query"])
                 return [types.TextContent(type="text", text=str(results))]
 
