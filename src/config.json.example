@@ -1,0 +1,21 @@
+{
+    "databases": {
+        "default": {
+            "driver": "ODBC Driver 17 for SQL Server",
+            "server": "你的服务器地址",
+            "database": "数据库名",
+            "username": "账号",
+            "password": "密码",
+            "trusted_connection": false,
+            "readonly": false,
+            "query_timeout": 30,
+            "max_rows": 200,
+            "confirm_writes": false
+        }
+    },
+    "default_database": "default",
+    "server": {
+        "name": "mssql-manager",
+        "version": "0.2.0"
+    }
+}

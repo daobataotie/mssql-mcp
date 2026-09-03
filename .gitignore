@@ -1,2 +1,9 @@
 /src/config.json
 /src/*.json1
+__pycache__/
+.pytest_cache/
+/tests/_temp_config.json
+/tests/_unit_config.json
+
+mssql_mcp.egg-info/
+build/

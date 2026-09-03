@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mssql-mcp"
+version = "0.2.0"
+description = "MCP server for Microsoft SQL Server: multi-database, stored procedures, resource templates and safety guardrails"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "caorui" }]
+requires-python = ">=3.10"
+keywords = ["mcp", "mssql", "sql-server", "model-context-protocol", "database"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Database",
+]
+dependencies = [
+    "pyodbc>=4.0.39",
+    "pydantic>=2.0.0",
+    "mcp>=1.9.0,<2.0.0",
+]
+
+[project.scripts]
+# 命令行入口：安装后直接执行 mssql-mcp 启动服务器（stdio 传输）
+mssql-mcp = "mssql_mcp.server:main_sync"
+
+[tool.setuptools]
+packages = ["mssql_mcp"]
+
+# 目录不重命名：仓库内保持 src/ 布局，安装时映射为 mssql_mcp 包
+[tool.setuptools.package-dir]
+mssql_mcp = "src"
