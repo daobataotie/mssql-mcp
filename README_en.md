@@ -58,7 +58,7 @@ All SQL goes through static validation before execution:
 - `readonly: true` disables all write operations, including stored procedures (they are black boxes that may write)
 - Stored procedure names are strictly validated as 1–3 dotted identifier parts before being embedded into `{CALL ...}`
 - Results are truncated at `max_rows` rows; queries are aborted after `query_timeout` seconds
-- With `confirm_writes: true`, write operations first ask the user for confirmation via MCP elicitation (clients without elicitation support fall back to executing directly)
+- With `confirm_writes: true`, all state-changing operations (`write_query` writes, `create_table`, `execute_procedure`) first ask the user for confirmation via MCP elicitation (clients without elicitation support fall back to executing directly)
 - Comments and string literals are stripped before validation, so they cannot be used to bypass checks
 
 ## Demo
@@ -152,7 +152,7 @@ Optional fields (per connection):
 | `readonly` | `false` | Read-only mode: blocks all write operations (incl. procedures) |
 | `query_timeout` | `30` | Query timeout in seconds |
 | `max_rows` | `200` | Max rows per result set; extra rows are truncated |
-| `confirm_writes` | `false` | Ask for user confirmation (elicitation) before writes |
+| `confirm_writes` | `false` | Ask for user confirmation (elicitation) before all state-changing operations (writes / CREATE TABLE / procedures) |
 | `encrypt` | (none) | ODBC encryption, for Driver 18 (`true` / `false`) |
 | `trust_server_certificate` | `false` | Trust self-signed certificates, useful with Driver 18 |
 

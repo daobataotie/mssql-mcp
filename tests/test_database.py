@@ -21,9 +21,10 @@ from server import Config, MssqlDatabase  # noqa: E402
 
 @pytest.fixture
 def db() -> MssqlDatabase:
-    """基于真实配置建立直连数据库实例（default 连接）"""
+    """基于真实配置建立直连数据库实例（配置的默认连接）"""
     config = Config()
-    return MssqlDatabase('default', config.db_config('default'))
+    name = config.default_database
+    return MssqlDatabase(name, config.db_config(name))
 
 
 class TestConnectionResilience:
@@ -53,8 +54,9 @@ class TestConnectionResilience:
         """查询超时（HYT00）不重试：总耗时约等于单倍超时，而非双倍"""
         # 用独立实例设置 1 秒超时，避免污染其他测试的连接配置
         config = Config()
+        name = config.default_database
         slow = MssqlDatabase('timeout_test',
-                             {**config.db_config('default'), 'query_timeout': 1})
+                             {**config.db_config(name), 'query_timeout': 1})
         t0 = time.monotonic()
         with pytest.raises(pyodbc.Error):
             slow.execute_read("WAITFOR DELAY '00:00:05'")

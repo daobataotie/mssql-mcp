@@ -44,20 +44,33 @@ def _write_temp_config(config: dict) -> str:
     return path
 
 
+def _primary_db_cfg(cfg: dict) -> dict:
+    """取主连接配置：兼容旧版单库（database 键）与新版多库（databases 键）两种格式
+
+    多库格式下取 default_database 指向的连接（缺省时取第一个）。
+    """
+    if 'database' in cfg:
+        return cfg['database']
+    databases = cfg['databases']
+    name = cfg.get('default_database') or next(iter(databases))
+    return databases[name]
+
+
 def _write_temp_config_db(**overrides) -> str:
     """基于真实配置生成单库临时配置（覆盖 readonly / max_rows 等键）"""
     cfg = _load_config()
-    cfg['database'].update(overrides)
+    _primary_db_cfg(cfg).update(overrides)
     return _write_temp_config(cfg)
 
 
 def _write_temp_config_multi() -> str:
     """生成多库临时配置：default（可写）+ readonly_copy（同实例但只读）"""
     cfg = _load_config()
+    primary = _primary_db_cfg(cfg)
     return _write_temp_config({
         "databases": {
-            "default": {**cfg['database']},
-            "readonly_copy": {**cfg['database'], "readonly": True},
+            "default": {**primary},
+            "readonly_copy": {**primary, "readonly": True},
         },
         "server": cfg['server'],
     })
@@ -65,7 +78,7 @@ def _write_temp_config_multi() -> str:
 
 def _direct_connection():
     """直连数据库（测试夹具建表/建SP/清理用，不经过 MCP）"""
-    cfg = _load_config()['database']
+    cfg = _primary_db_cfg(_load_config())
     conn_str = (
         f"DRIVER={{{cfg['driver']}}};SERVER={cfg['server']};DATABASE={cfg['database']};"
         f"UID={cfg['username']};PWD={cfg['password']}"
@@ -458,10 +471,24 @@ def test_list_databases_and_multi_db_routing():
 
 
 def test_single_db_config_backward_compatible():
-    """旧版单库配置：database 参数可显式传 "default"，不传走默认"""
-    result = _call('read_query', {'query': 'SELECT 1 AS n', 'database': 'default'})
-    assert not result.isError
-    assert result.structuredContent['rows'] == [[1]]
+    """旧版单库配置：自动包装为 default 连接，database 参数可显式传 "default" """
+    # 从真实配置提取主连接，拼成旧版单库格式（database 键）的临时配置
+    cfg = _load_config()
+    cfg_path = _write_temp_config({
+        'database': {**_primary_db_cfg(cfg)},
+        'server': cfg['server'],
+    })
+    try:
+        result = _call('read_query', {'query': 'SELECT 1 AS n', 'database': 'default'},
+                       config_path=cfg_path)
+        assert not result.isError, first_text(result)
+        assert result.structuredContent['rows'] == [[1]]
+        # 不传 database 参数同样走默认连接
+        result = _call('read_query', {'query': 'SELECT 2 AS n'}, config_path=cfg_path)
+        assert not result.isError, first_text(result)
+        assert result.structuredContent['rows'] == [[2]]
+    finally:
+        os.unlink(cfg_path)
 
 
 # ==================== 资源模板 ====================
@@ -480,9 +507,12 @@ def test_resource_template_default_db():
 def test_resource_template_named_db():
     """schema://{database}/dbo/{table} 资源模板：显式指定数据库连接"""
     _exec_direct(f'CREATE TABLE dbo.{TEST_TABLE} (id INT PRIMARY KEY)')
-    content = _read_resource(f'schema://default/dbo/{TEST_TABLE}')
+    # 连接名取自真实配置的默认连接（多库格式下不再固定叫 "default"）
+    cfg = _load_config()
+    conn_name = cfg.get('default_database') if 'databases' in cfg else 'default'
+    content = _read_resource(f'schema://{conn_name}/dbo/{TEST_TABLE}')
     data = json.loads(content)
-    assert data['database'] == 'default'
+    assert data['database'] == conn_name
     assert data['columns'][0]['name'] == 'id'
 
 
@@ -627,6 +657,25 @@ def test_confirm_writes_applies_to_procedure():
                        elicitation_handler=_elicit_handler("decline"))
         assert result.isError
         assert '未确认' in first_text(result)
+    finally:
+        os.unlink(cfg_path)
+
+
+def test_confirm_writes_applies_to_create_table():
+    """confirm_writes 同样覆盖建表（DDL）：拒绝时取消且表未创建"""
+    cfg_path = _write_temp_config_db(confirm_writes=True)
+    try:
+        result = _call('create_table',
+                       {'query': f'CREATE TABLE dbo.{TEST_TABLE} (id INT)'},
+                       config_path=cfg_path,
+                       elicitation_handler=_elicit_handler("decline"))
+        assert result.isError
+        assert '未确认' in first_text(result)
+        # 表未落地（直连确认对象不存在）
+        with _direct_connection() as conn:
+            exists = conn.cursor().execute(
+                f"SELECT OBJECT_ID('dbo.{TEST_TABLE}', 'U')").fetchone()[0]
+        assert exists is None
     finally:
         os.unlink(cfg_path)
 

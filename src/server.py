@@ -882,14 +882,21 @@ def build_server(config: Config, manager: DatabaseManager) -> FastMCP:
 
     @mcp.tool(
         name="create_table",
-        description="在 MSSQL 数据库中执行 CREATE TABLE 建表语句",
-        annotations=types.ToolAnnotations(destructiveHint=False),
+        description="在 MSSQL 数据库中执行 CREATE TABLE 建表语句；confirm_writes 开启时先二次确认",
+        annotations=types.ToolAnnotations(destructiveHint=True, idempotentHint=False),
     )
-    async def create_table(query: str, database: str | None = None) -> dict[str, Any]:
-        """执行建表语句，返回 affected_rows。"""
+    async def create_table(query: str, database: str | None = None,
+                           ctx: Context = None) -> dict[str, Any]:
+        """执行建表语句，返回 affected_rows。confirm_writes 开启时先向用户二次确认。
+
+        建表属于 DDL（schema 变更），与 DML 一样是状态变更操作，
+        因此同样纳入 confirm_writes 的 Elicitation 二次确认范围。
+        """
         db = manager.get(database)
         db.check_writable()  # 只读模式护栏
         validate_create_table(query)  # 安全校验：仅允许单条 CREATE TABLE
+        if db.confirm_writes and ctx is not None:
+            await _confirm_write(ctx, db.name, query)  # Elicitation 二次确认
         return await asyncio.to_thread(db.execute_write, query)
 
     @mcp.tool(
