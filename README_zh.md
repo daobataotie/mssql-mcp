@@ -56,7 +56,9 @@ MSSQL MCP Server, 提供数据库交互和商业智能功能。此服务器支�
 - `readonly: true` 时禁用一切写操作（含存储过程——它是可能写库的黑盒）
 - 存储过程名严格校验为 1~3 段点分标识符后才拼入 `{CALL ...}`
 - 结果超过 `max_rows` 行自动截断；查询超过 `query_timeout` 秒自动中止
-- `confirm_writes: true` 时所有状态变更操作（`write_query` 写入、`create_table` 建表、`execute_procedure` 存储过程）先通过 MCP elicitation 向用户二次确认（不支持 elicitation 的客户端自动回退为直接执行）
+- `confirm_writes: true` 时所有状态变更操作（`write_query` 写入、`create_table` 建表、`execute_procedure` 存储过程）先通过 MCP elicitation 向用户二次确认
+
+  > ⚠️ **重要限制**：二次确认依赖客户端实现 MCP Elicitation 协议。**不支持该协议的客户端（如 TraeWork / Cursor ...）会跳过确认直接执行写操作**，即 `confirm_writes: true` 在此类客户端上不产生任何保护效果（服务器日志会记录跳过警告）。若需要在任何客户端上都获得可靠的写保护，请改用 `readonly: true`（硬阻断一切写入，与客户端能力无关）
 - 校验前先剥离注释与字符串字面量，无法通过注释或字符串绕过检查
 
 ## 演示
@@ -150,7 +152,7 @@ pip install .
 | `readonly` | `false` | 只读模式：禁用一切写操作（含存储过程） |
 | `query_timeout` | `30` | 查询超时（秒） |
 | `max_rows` | `200` | 单个结果集最大返回行数，超出部分截断 |
-| `confirm_writes` | `false` | 所有状态变更操作（写入 / 建表 / 存储过程）前通过 Elicitation 向用户二次确认 |
+| `confirm_writes` | `false` | 所有状态变更操作（写入 / 建表 / 存储过程）前通过 Elicitation 向用户二次确认；**需客户端支持 Elicitation，不支持的客户端（如 TraeWork / Cursor）会直接执行，硬保护请用 `readonly`** |
 | `encrypt` | （不设置） | ODBC 加密开关，适配 Driver 18（`true` / `false`） |
 | `trust_server_certificate` | `false` | 信任自签名证书，Driver 18 连旧服务器时常用 |
 
